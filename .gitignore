@@ -1,3 +1,4 @@
 deploy
+env
 .hyde_deps
 *.swp

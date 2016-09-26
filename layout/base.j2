@@ -16,7 +16,6 @@
     <!-- Place favicon.ico & apple-touch-icon.png
         in the root of your domain and delete these references -->
     <link rel="shortcut icon" href="{{ media_url('/images/favicon.ico') }}">
-    <link rel="apple-touch-icon" href="{{ media_url('/images/apple-touch-icon.png') }}">
     {% endblock favicons %}
 
     {% block css %}
@@ -55,11 +54,31 @@
             {% block header %}
             <div class="header">
                 <h1>{{ resource.meta.title }}</h1>
-                <h2>{{ resource.meta.subtitle }}</h2>
+                {% if resource.meta.subtitle %}<h2>{{ resource.meta.subtitle }}</h2>{% endif %}
             </div>
             {% endblock %}
-
+            
             <div class="content">
+                {% if resource.meta.welcome %}
+                <div class="pure-g" style="margin-top: 20px">
+                    <div class="pure-u-1-3">
+                        <img alt="Scibian" src="{{ media_url('images/scibian_400.png') }}" class="pure-img-responsive" />
+                        {% filter markdown|typogrify -%}
+                        {% block welcome2 %}
+                        {% endblock welcome2 %}
+                        {% endfilter %}
+                    </div>
+                    <div class="pure-u-2-3">
+                        <div style="padding: 10px">
+                        {% filter markdown|typogrify -%}
+                        {% block welcome %}
+                        {% endblock welcome %}
+                        {% endfilter %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
                 {% filter markdown|typogrify -%}
                 {% block main %}
                 {% endblock main %}

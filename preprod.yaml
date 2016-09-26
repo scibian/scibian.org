@@ -1,0 +1,5 @@
+extends: site.yaml
+mode: production
+deploy_root: /local00/www/preprod-site
+media_url: /preprod-site/media
+base_url: /preprod-site/

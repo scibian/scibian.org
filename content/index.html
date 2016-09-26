@@ -1,20 +1,29 @@
 ---
 extends: base.j2
-default_block: main
-title: Scibian - a Linux distro for scientific computing
-description: Scibian is a Linux distro for scientific computing
+default_block: none
+title: Scibian Linux
+subtitle: Scibian is a Linux distribution based on Debian for scientific computing.
+description: Scibian is a Linux distribution based on Debian for scientific computing.
+welcome: true
 ---
 
-{% from "macros.j2" import render_excerpt with context %}
-<section class="blog_excerpt">
-{% set latest = site.content.walk_resources_sorted_by_time()|first %}
+{% block welcome %}
 
-{% if latest -%}
-{{ render_excerpt(latest, 'post') }}
+* streamlined towards industrial R&D and engineering
+* fits in corporate IT infrastructures and processes
+* supports recent hardware
+* maintains each major version for 6 years with security updates
+* includes additionnal libraries to make major scientific software run out of the box
+* supplies tools for binary compatibility across different versions based on schroot
 
-<a class="button white medium"
-    href="{{ content_url(latest.url) }}">Read more&hellip;</a>
+{% endblock %}
 
-{%- endif %}
+{% block welcome2 %}
+You can [download](/download.html) and [install](/docs/installation.html) Scibian right away.
 
-</section>
+Scibian has a community, [contribute](/contribute.html) to the project on [Github](https://github.com/scibian) !
+{% endblock %}
+
+{% block main %}
+**Scibian is hosting a launch event on the 30th of September in Paris** ! Check it out: <https://www.eventbrite.fr/e/billets-scibian-linux-pour-lingenierie-scientifique-27404072318>
+{% endblock %}
