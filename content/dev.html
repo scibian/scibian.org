@@ -3,13 +3,219 @@ title: Contribute to Scibian
 subtitle: 
 ---
 
-Scibian development is hosted on Github:
-<https://github.com/scibian/>
+# Build Infrastructure
 
-Feel free to fork any existing package and submit pull requests.
+![Scibian build infrastructure]({{ media_url('images/scibian_build_infrastructure.svg') }})
 
-If you wish to include a new package to the distribution, open an issue for the [scibian package](https://github.com/scibian/scibian) and provide the link the package repository. We'll fork it and it will be automatically included into our build system.
+Scibian systems use a combination of Debian and Scibian package repositories.
+Debian repositories are maintained by the [Debian project](http://debian.org)
+community. The Scibian packages repositories only contains additional packages
+or modified packages from the Debian community for the needs of scientific
+computing.
 
-Source code from Github is rebuilt daily in order to generate installation media and repositories. We're using [Jenkins](https://jenkins.io/) and [Jenkins Debian glue](http://jenkins-debian-glue.org).
+The sources of the Scibian packages are maintained in Git repositories hosted
+in the GitHub Scibian organization. When commits are pushed to these Git
+repositories, webhooks trigger packages build on a Jenkins instance setup with
+jenkins-debian-glue plugin. If packages builds are successful, Scibian package
+repositories are updated with new packages.
 
-For active contributors an access to our build platform may be handy, contact us if you are in this case.
+The Scibian team members push commits directly to the Git repositories of the
+GitHub Scibian organization. Other contributors are invited to fork these
+repositories are send pull requests. Please [contact us](/about.html#contact)
+to become a member of the Scibian team!
+
+# Source packages repositories
+
+In order to be available in Scibian packages repositories, all source packages
+must be maintained into Git repositories hosted in the GitHub [Scibian
+organization](https://github.com/scibian).
+
+All source packages Git repositories are maintained using the
+[`git-buildpackage`](https://honk.sigxcpu.org/piki/projects/git-buildpackage/)
+utility.
+
+## Branches
+
+As an extension of
+[`git-buildpackage` default conventions](https://honk.sigxcpu.org/projects/git-buildpackage/manual-html/gbp.intro.html#gbp.repository),
+the branches of the source packages Git repositories must respect the following
+naming conventions, depending on the package type.
+
+### Scibian specific native packages
+
+* `master`: code and packaging for last Scibian release.
+* `scibian/$release` *(optional)*: code and packaging for previous Scibian
+  releases (ex: `scibian/8`).
+
+### Debian native packages modified in Scibian
+
+* `master`: last imported version of the code and packaging from Debian.
+* `debian/$codename` *(optional)*: code and packaging for specific Debian
+  releases (ex: `debian/stretch`).
+* `scibian/master: code and packaging for last Scibian release.
+* `scibian/$release` *(optional)*: code and packaging for previous Scibian
+  releases (ex: `scibian/8`).
+
+### Scibian specific quilt package
+
+* `upstream` : last imported version of the code as released by upstream
+  developers.
+* `scibian/master`: code and packaging for last Scibian release.
+* `scibian/$release` *(optional)*: code and packaging for previous Scibian
+  releases (ex: `scibian/8`).
+
+**NOTE:** There is no `master` branch in this context. The default branch in
+GitHub repository settings must be set to `scibian/master`.
+
+### Debian quilt package modified in Scibian
+
+* `upstream`: last imported version of the code as released by upstream
+  developers.
+* `master`: last imported version of the code and packaging from Debian.
+* `debian/$codename` *(optional)*: code and packaging for specific Debian
+  releases (ex: `debian/stretch`).
+* `scibian/master`: code and packaging for last Scibian release.
+* `scibian/$release` *(optional)*: code and packaging for previous Scibian
+  releases (ex: `scibian/8`).
+
+All `debian/*` et `scibian/*` branches of the Git repositories must be buildable
+using [pbuilder](https://pbuilder.alioth.debian.org/) (or similar). Otherwise,
+it must considered as a bug.
+
+## Tags
+
+As an extension of `git-buildpackage` default conventions, the tags of the
+source packages releases in the Git repositories must respect the following
+naming conventions:
+
+* `upstream/$version`: for upstream release (ex: `upstream/1.2.3`)
+* `debian/$version`: for Debian releases (ex: `debian/1.2.3-1`)
+* `scibian/$version`: for Scibian releases (ex: `scibian/1.2.3-1`)
+
+For native packages, there is no `upstream/*` tags.
+
+# Packages metadata
+
+## Names
+
+Scibian specific native packages must be prefixed with `scibian-`. This rule
+applies to both source and binary packages.
+
+This rule does not apply to software temporarily released as native package in
+Scibian only (for the sake of quick delivering in this distribution) if they
+can be usefull outside the scope of the distribution (ex:
+[unclebench](https://github.com/edf-hpc/unclebench)). In the long term, the goal
+must be to package this software as an upstream code.
+
+## Versions
+
+The Scibian version numbering policy is a direct extension of Debian policy:
+https://www.debian.org/doc/debian-policy/#version. This document notably
+explains what are the following version components:
+
+* `epoch`
+* `upstream_version`
+* `debian_revision`
+
+This sections explains all the extensions to this policy with examples for most
+cases. Scibian introduces the following version components:
+
+* `scibian_version`: the version number of the Scibian major release, it must
+  match `\d{1,2}` (ex: `9`).
+* `scibian_release`: the release number for the package in the Scibian release,
+  it must match `\d+` (ex: `12`).
+
+### Scibian specific native package
+
+```
+[epoch:]<upstream_version>
+```
+
+Examples:
+
+* `10`
+* `1.2.3`
+
+### Debian native packages modified in Scibian
+
+```
+[epoch:]<upstream_version>sci<scibian_version>u<scibian_revision>
+```
+
+Examples:
+
+* `1.2.3` released in Debian → `1.2.3sci9u1` for the 1<sup>st</sup> release in
+  Scibian 9
+* `1.2.3` released in Debian → `1.2.3sci8u3` for the 3<sup>rd</sup> release in
+  Scibian 8
+
+### Quilt packages
+
+```
+[epoch:]<upstream_version>-<debian_revision>sci<scibian_version>u<scibian_revision>
+```
+
+*NB:* the `debian_version` must be set to `0` if the package is not imported from
+Debian but created from scratch for Scibian.
+
+Examples:
+
+* `1.2.3` released upstream and not released in Debian → `1.2.3-0sci9u1` for
+  the 1<sup>st</sup> release in Scibian 9
+* `1.2.3-1` released in Debian → `1.2.3-1sci9u1` for the 1<sup>st</sup> release
+  in Scibian 9
+* `1.2.3-1~bpo9` released in Debian stretch backports → `1.2.3-1~bpo9sci9u1` for
+  the 1<sup>st</sup> release in Scibian 9
+
+## Changelogs
+
+When an issue reported in a bug tracker is fixed, a changelog entry must mention
+this closed issue.
+
+For example: `Added patch X (closes: GH-Y).`
+
+Where `Y` is the number of the issue in GitHub.
+
+## Sections
+
+The section of Scibian specific native packages must be `scibian`.
+
+## Maintainers
+
+The maintainers in `debian/control` file of all Scibian packages must be set
+to: Scibian Project &lt;packaging@scibian.org&gt;
+
+## Copyrights
+
+In the source code files headers of Scibian specific native packages and in
+`debian/copyright` file of the Scibian specific source packages, the copyright
+must be given to: Scibian Project &lt;legal@scibian.org&gt;
+
+This rule does not apply to source code files headers of software temporarily
+released as native package in Scibian only if they can be usefull outside the
+scope of the distribution (ex:
+[unclebench](https://github.com/edf-hpc/unclebench)). For this software, the
+real upstream developer or team must be used for copyrights.
+
+## Tools identity
+
+Maintainance tools which requires an identity (for automatic commits or
+changelog updates) must use: Scibian Project &lt;packaging@scibian.org&gt;
+
+## Licensing
+
+All code produced in Scibian project must be licensed under the terms of
+[GPLv3 free software license](https://www.gnu.org/licenses/gpl-3.0.html).
+Exceptions to this rule must be wise.
+
+## Internationalization
+
+All technical texts not aimed to end users (code comments, commit messages,
+changelogs, and so on) must be written in english.
+
+The Scibian specific software command-line interfaces (CLI) must be in english.
+They do not have to provide internationalization.
+
+The Scibian specific software graphical user interface (GUI) must provide
+internationalization (based on gettext system) with english as default language and
+at least french as an additional language.
