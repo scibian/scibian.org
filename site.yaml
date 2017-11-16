@@ -48,7 +48,7 @@ meta:
     company: Scibian
     nodemeta: meta.yaml
     created: !!timestamp 2010-01-01 00:00:00
-    author: Lakshmi Vyasarajan
+    author: Scibian Project
     charset: utf-8
     extends: base.j2
     default_block: main
