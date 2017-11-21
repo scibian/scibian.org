@@ -1,0 +1,23 @@
+---
+title: Build Infrastructure
+subtitle: Overview of Scibian Build Infrastructure
+---
+
+![Scibian build infrastructure]({{ media_url('images/scibian_build_infrastructure.svg') }})
+
+Scibian systems use a combination of Debian and Scibian package repositories.
+Debian repositories are maintained by the [Debian project](http://debian.org)
+community. The Scibian packages repositories only contains additional packages
+or modified packages from the Debian community for the needs of scientific
+computing.
+
+The sources of the Scibian packages are maintained in Git repositories hosted
+in the GitHub Scibian organization. When commits are pushed to these Git
+repositories, webhooks trigger packages build on a Jenkins instance setup with
+jenkins-debian-glue plugin. If packages builds are successful, Scibian package
+repositories are updated with new packages.
+
+The Scibian team members push commits directly to the Git repositories of the
+GitHub Scibian organization. Other contributors are invited to fork these
+repositories are send pull requests. Please [contact us](/about.html#contact)
+to become a member of the Scibian team!

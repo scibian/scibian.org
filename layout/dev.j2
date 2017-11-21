@@ -1,0 +1,24 @@
+{% extends "base.j2" %}
+
+{% block main -%}
+
+<div style="background-image:url('{{ media_url('images/icons/infra.png') }}');" class="dev-item"/>
+  {% filter markdown|typogrify -%}
+  {% block dev_infra %}
+  {% endblock dev_infra %}
+  {% endfilter %}
+</div>
+<div style="background-image:url('{{ media_url('images/icons/git.png') }}');" class="dev-item"/>
+  {% filter markdown|typogrify -%}
+  {% block dev_src %}
+  {% endblock dev_src %}
+  {% endfilter %}
+</div>
+<div style="background-image:url('{{ media_url('images/icons/package.png') }}');" class="dev-item"/>
+  {% filter markdown|typogrify -%}
+  {% block dev_pkg %}
+  {% endblock dev_pkg %}
+  {% endfilter %}
+</div>
+
+{%- endblock %}
