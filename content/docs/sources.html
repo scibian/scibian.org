@@ -1,0 +1,72 @@
+---
+title: Source Management Conventions
+subtitle:
+---
+
+In order to be available in Scibian packages repositories, all source packages
+must be maintained into Git repositories hosted in the GitHub [Scibian
+organization](https://github.com/scibian).
+
+All source packages Git repositories are maintained using the
+[`git-buildpackage`](https://honk.sigxcpu.org/piki/projects/git-buildpackage/)
+utility.
+
+# Branches
+
+As an extension of
+[`git-buildpackage` default conventions](https://honk.sigxcpu.org/projects/git-buildpackage/manual-html/gbp.intro.html#gbp.repository),
+the branches of the source packages Git repositories must respect the following
+naming conventions, depending on the package type.
+
+## Scibian specific native packages
+
+* `master`: code and packaging for last Scibian release.
+* `scibian/$release` *(optional)*: code and packaging for previous Scibian
+  releases (ex: `scibian/8`).
+
+## Debian native packages modified in Scibian
+
+* `master`: last imported version of the code and packaging from Debian.
+* `debian/$codename` *(optional)*: code and packaging for specific Debian
+  releases (ex: `debian/stretch`).
+* `scibian/master: code and packaging for last Scibian release.
+* `scibian/$release` *(optional)*: code and packaging for previous Scibian
+  releases (ex: `scibian/8`).
+
+## Scibian specific quilt package
+
+* `upstream` : last imported version of the code as released by upstream
+  developers.
+* `scibian/master`: code and packaging for last Scibian release.
+* `scibian/$release` *(optional)*: code and packaging for previous Scibian
+  releases (ex: `scibian/8`).
+
+**NOTE:** There is no `master` branch in this context. The default branch in
+GitHub repository settings must be set to `scibian/master`.
+
+## Debian quilt package modified in Scibian
+
+* `upstream`: last imported version of the code as released by upstream
+  developers.
+* `master`: last imported version of the code and packaging from Debian.
+* `debian/$codename` *(optional)*: code and packaging for specific Debian
+  releases (ex: `debian/stretch`).
+* `scibian/master`: code and packaging for last Scibian release.
+* `scibian/$release` *(optional)*: code and packaging for previous Scibian
+  releases (ex: `scibian/8`).
+
+All `debian/*` et `scibian/*` branches of the Git repositories must be buildable
+using [pbuilder](https://pbuilder.alioth.debian.org/) (or similar). Otherwise,
+it must considered as a bug.
+
+# Tags
+
+As an extension of `git-buildpackage` default conventions, the tags of the
+source packages releases in the Git repositories must respect the following
+naming conventions:
+
+* `upstream/$version`: for upstream release (ex: `upstream/1.2.3`)
+* `debian/$version`: for Debian releases (ex: `debian/1.2.3-1`)
+* `scibian/$version`: for Scibian releases (ex: `scibian/1.2.3-1`)
+
+For native packages, there is no `upstream/*` tags.
