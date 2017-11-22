@@ -1,0 +1,247 @@
+---
+title: Build Infrastructure Installation Procedure
+subtitle: How to install the scibian.org server?
+---
+
+This document provides all steps to install and setup the scibian.org server.
+
+!!! note
+    The content of this document would deserve to be replaced by configuration
+    management recipes (Puppet or similar). Please [contact
+    us](/about.html#contact) if you want to improve this.
+
+# Base installation
+
+The scibian.org is a dedicated server hosted in a [OVH](https://www.ovh.com)
+datacenter. It is installed with Debian 8 *Jessie* using OVH remote
+installation utility.
+
+# APT sources
+
+Modify the content of `/etc/apt/sources.list` file with:
+
+```
+deb http://security.debian.org/ jessie/updates main
+deb-src http://security.debian.org/ jessie/updates main
+deb http://debian.mirrors.ovh.net/debian/ jessie-updates main
+deb-src http://debian.mirrors.ovh.net/debian/ jessie-updates main
+deb http://debian.mirrors.ovh.net/debian/ jessie-backports main
+deb-src http://debian.mirrors.ovh.net/debian/ jessie-backports main
+deb http://debian.mirrors.ovh.net/debian/ jessie main contrib non-free
+deb-src http://debian.mirrors.ovh.net/debian/ jessie main contrib non-free
+```
+
+Add jenkins upstream APT repositories in
+`/etc/apt/sources.list.d/jenkins.list`:
+
+```
+deb http://pkg.jenkins-ci.org/debian-stable binary/
+```
+
+Add jenkins debian glue APT repository in
+`/etc/apt/sources.list.d/jenkins-debian-glue.list`:
+
+```
+deb http://jenkins.grml.org/debian jenkins-debian-glue-release main
+```
+
+# Automatic updates
+
+Install the `unattended-upgrades` package:
+
+```
+apt-get install unattended-upgrades
+```
+
+Setup the utility in `/etc/apt/apt.conf.d/10periodic`:
+
+```
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "7";
+APT::Periodic::Unattended-Upgrade "1";
+```
+
+# Emails
+
+Install Postfix SMTP server and DKIM signing tool:
+
+```
+apt-get install postfix opendkim opendkim-tools
+```
+
+Add emails aliases in `/etc/aliases`:
+
+```
+contact: alexis.bezverkhyy@edf.fr,mehdi.dogguy@edf.fr
+packaging: contact
+legal: contact
+archive: contact
+root: alexis.bezverkhyy@edf.fr
+```
+
+Generate the aliases database and reload Postfix:
+
+```
+newaliases && postfix check && postfix reload
+```
+
+Setup DKIM in `/etc/default/opendkim` by adding this line:
+
+```
+SOCKET="inet:12301@localhost"
+```
+
+Generate a DKIM key:
+
+```
+mkdir /etc/mail && cd /etc/mail
+opendkim-genkey -s mail -d scibian.org
+```
+
+Setup Postfix to use OpenDKIM in `/etc/postfix/main.cf`:
+
+```
+milter_protocol = 6
+milter_default_action = accept
+smtpd_milters = inet:127.0.0.1:12301
+non_smtpd_milters = inet:127.0.0.1:12301
+```
+
+# Jenkins
+
+Install Jenkins with the required plugins:
+
+```
+apt-get install jenkins jenkins-debian-glue jenkins-job-builder
+```
+
+Setup `jenkins-debian-glue` in `/etc/jenkins/debian_glue`:
+
+```
+MAIN_ARCHITECTURE="amd64"
+DEFAULT_REPOSITORY='/local00/repo-ci'
+USE_ORIG_VERSION=true
+RELEASE_REPOSITORY='/local00/repo'
+REMOVE_FROM_RELEASE=true
+UNRELEASED_APPEND_COMMIT=false
+```
+
+Then setup Jenkins in `/etc/default/jenkins`:
+
+```
+NAME=jenkins
+JAVA=/usr/bin/java
+JAVA_ARGS="-Djava.awt.headless=true"  # Allow graphs etc. to work even when an X server is present
+PIDFILE=/var/run/$NAME/$NAME.pid
+JENKINS_USER=$NAME
+JENKINS_GROUP=$NAME
+JENKINS_WAR=/usr/share/$NAME/$NAME.war
+JENKINS_HOME=/local00/$NAME
+RUN_STANDALONE=true
+JENKINS_LOG=/var/log/$NAME/$NAME.log
+MAXOPENFILES=8192
+HTTP_PORT=8080
+PREFIX=/$NAME
+JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --httpListenAddress=127.0.0.1 --prefix=$PREFIX"
+```
+
+# HTTP server
+
+Install Nginx HTTP server:
+
+```
+apt-get install nginx
+```
+
+Then install Let's encrypt `certbot` utility from the Jessie backports
+repository:
+
+```
+apt-get install -t jessie-backports certbot
+```
+
+Setup `certbot` in `/etc/letsencrypt/renewal/scibian.org.conf`:
+
+```
+version = 0.8.1
+cert = /etc/letsencrypt/live/scibian.org/cert.pem
+privkey = /etc/letsencrypt/live/scibian.org/privkey.pem
+chain = /etc/letsencrypt/live/scibian.org/chain.pem
+fullchain = /etc/letsencrypt/live/scibian.org/fullchain.pem
+[renewalparams]
+authenticator = webroot
+installer = None
+account = <account>
+[[webroot_map]]
+www.scibian.org = /local00/www
+scibian.org = /local00/www
+```
+
+!!! note
+    The ACME account can be revoked and replaced by a new one if needed.
+
+Finally, setup Nginx in `/etc/nginx/sites-enabled/default`:
+
+```
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+    ssl_certificate /etc/letsencrypt/live/scibian.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/scibian.org/privkey.pem;
+    root /local00/www;
+    index index.html index.htm index.nginx-debian.html;
+    server_name scibian.org;
+    location / {
+        # First attempt to serve request as file, then
+        # as directory, then fall back to displaying a 404.
+        try_files $uri $uri/ =404;
+    }
+    location /jenkins/ {
+        proxy_set_header        Host $host:$server_port;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header        X-Forwarded-Proto $scheme;
+        satisfy any;
+        deny    all;
+        auth_basic "Jenkins";
+            auth_basic_user_file /etc/nginx/jenkins_htpasswd;
+        proxy_set_header    Authorization "";
+        proxy_set_header    X-Forwarded-User $remote_user;
+        proxy_pass http://127.0.0.1:8080;
+        proxy_redirect      http:// https://;
+        add_header Pragma "no-cache";
+        proxy_read_timeout  90;
+    }
+    location /repo/ {
+        alias   /local00/repo/;
+        autoindex on;
+    }
+    location /repo-ci/ {
+        alias   /local00/repo-ci/;
+        autoindex on;
+    }
+}
+```
+
+# Repository
+
+How-to bootstrap the repository (with GPG key)? TBD
+
+# Website
+
+How-to deploy the website? TBD
+
+# Jenkins jobs
+
+How-to populate Jenkins with jobs? TBD
+
+# Backups
+
+How-to install/setup backups? TBD
+
+# Monitoring
+
+How-to install/setup monitoring? TBD
