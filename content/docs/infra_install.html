@@ -223,6 +223,14 @@ server {
         alias   /local00/repo-ci/;
         autoindex on;
     }
+    location /munin/static/ {
+        alias /etc/munin/static/;
+        expires modified +1w;
+    }
+    location /munin/ {
+        alias /var/cache/munin/www/;
+        expires modified +310s;
+    }
 }
 ```
 
@@ -244,4 +252,9 @@ How-to install/setup backups? TBD
 
 # Monitoring
 
-How-to install/setup monitoring? TBD
+Install [Munin](http://munin-monitoring.org/) packages (both node/grapher
+components) with the following command:
+
+```
+apt-get install munin munin-node
+```
