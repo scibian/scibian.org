@@ -231,6 +231,12 @@ server {
         alias /var/cache/munin/www/;
         expires modified +310s;
     }
+    location /nginx_status {
+        stub_status on;    # activate stub_status module
+        access_log off;
+        allow 127.0.0.1;   # restrict access to local only
+        deny all;
+    }
 }
 ```
 
@@ -257,4 +263,23 @@ components) with the following command:
 
 ```
 apt-get install munin munin-node
+```
+
+Create file `/etc/munin/plugin-conf.d/nginx` with the following content:
+
+```
+[nginx*]
+env.url http://localhost/nginx_status
+```
+
+Enable nginx plugins by creating the following symlinks:
+
+```
+cd /etc/munin/plugins/ && ln -sf /usr/share/munin/plugins/nginx_* .
+```
+
+Restart munin node service:
+
+```
+systemctl restart munin-node.service
 ```
