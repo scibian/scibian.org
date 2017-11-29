@@ -278,6 +278,29 @@ Enable nginx plugins by creating the following symlinks:
 cd /etc/munin/plugins/ && ln -sf /usr/share/munin/plugins/nginx_* .
 ```
 
+Edit `/etc/munin/munin.conf` to setup the node, by replacing the
+`[localhost.localdomain]` section with:
+
+```
+[scibian.org;server.scibian.org]
+    address 127.0.0.1
+    use_node_name yes
+    load.load.warning 8.0
+    load.load.critical 20.0
+    df._dev_md2.warning 80
+    df._dev_md2.critical 95
+    df._dev_md3.warning 80
+    df._dev_md3.critical 95
+```
+
+Then setup notification by creating the file
+`/etc/munin/munin-conf.d/notif.conf`:
+
+```
+contacts root
+contact.root.command mail -s "Munin notification ${var:host}" root
+```
+
 Restart munin node service:
 
 ```
