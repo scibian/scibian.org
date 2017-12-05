@@ -145,6 +145,19 @@ HTTP_PORT=8080
 PREFIX=/$NAME
 JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --httpListenAddress=127.0.0.1 --prefix=$PREFIX"
 ```
+Connect to the [Jenkins plugin manager](https://scibian.org/jenkins/pluginManager/) then
+select the following plugin for installation:
+
+* GitHub Authentication plugin
+
+Then connect to the [Jenkins security
+setup](https://scibian.org/jenkins/configureSecurity/) and set the following
+parameters:
+
+![Jenkins Security Settings]({{ media_url('images/jenkins_security_settings.png') }})
+
+The client ID and secret can be retrieved in the settings of the GitHub Scibian
+organization.
 
 # HTTP server
 
