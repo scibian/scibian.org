@@ -70,3 +70,12 @@ naming conventions:
 * `scibian/$version`: for Scibian releases (ex: `scibian/1.2.3-1`)
 
 For native packages, there is no `upstream/*` tags.
+
+To create the Scibian releases tag using `git-buildpackage`, run the following
+command:
+
+```
+gbp buildpackage --git-tag-only \
+                 --git-debian-tag='scibian/%(version)s' \
+                 --git-debian-tag-msg='%(pkg)s Scibian release %(version)s'
+```
