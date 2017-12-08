@@ -236,6 +236,10 @@ server {
         alias   /local00/repo-ci/;
         autoindex on;
     }
+    location /sync/ {
+        alias   /local00/sync/;
+        autoindex on;
+    }
     location /munin/static/ {
         alias /etc/munin/static/;
         expires modified +1w;
@@ -263,7 +267,18 @@ How-to deploy the website? TBD
 
 # Jenkins jobs
 
-How-to populate Jenkins with jobs? TBD
+Clone `scibian-build-tools` repository locally, for example in root home
+directory:
+
+```
+git clone https://github.com/scibian/scibian-build-tools.git
+```
+
+And run:
+
+```
+cd scibian-build-tools && make install
+```
 
 # Backups
 
