@@ -12,9 +12,14 @@ or modified packages from the Debian community for the needs of scientific
 computing.
 
 The sources of the Scibian packages are maintained in Git repositories hosted
-in the GitHub Scibian organization. When commits are pushed to these Git
-repositories, webhooks trigger packages build on a Jenkins instance setup with
-jenkins-debian-glue plugin. If packages builds are successful, Scibian package
+in the GitHub Scibian organization. The packages are built by a [Jenkins
+instance](https://scibian.org/jenkins) setup with jenkins-debian-glue plugin.
+Access to the Scibian Jenkins instance is restricted to members of the GitHub
+Scibian organization.
+
+A synchronization utility runs periodically to discover the Git repositories
+and generate the appropriate Jenkins jobs. The actual package builds are
+triggered manually. If packages builds are successful, Scibian package
 repositories are updated with new packages.
 
 The Scibian team members push commits directly to the Git repositories of the
