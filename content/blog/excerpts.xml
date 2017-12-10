@@ -1,0 +1,6 @@
+===
+title: News feed of Scibian.org (excerpts only)
+extends: atom.j2
+excerpts_only: true
+listable: false
+===

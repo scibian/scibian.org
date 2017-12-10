@@ -39,6 +39,13 @@ context:
                 type: page
                 url: dev.html
             -
+                name: News
+                description: Project news
+                css_class: news
+                type: page
+                url: blog/index.html
+
+            -
                 name: About
                 description: About
                 css_class: about
@@ -63,9 +70,9 @@ sorter:
 tagger:
     sorter: time
     archives:
-        blog:
-            source: blog
-            target: blog/tags
+        news:
+            source: news
+            target: news/tags
             template: tagged_posts.j2
             archive_extension: html
             meta:
