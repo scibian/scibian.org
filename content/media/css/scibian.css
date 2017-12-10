@@ -20,3 +20,7 @@ h1,h2,h3,h4,h5,h6 {
     padding-left: 150px;
     padding-top: 10px;
 }
+
+.atom-icon {
+    float: right;
+}
