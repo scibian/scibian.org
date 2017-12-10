@@ -2,6 +2,12 @@
 
 {% block main -%}
 
+<div style="background-image:url('{{ media_url('images/icons/news.png') }}');" class="dev-item"/>
+  {% filter markdown|typogrify -%}
+  {% block dev_news %}
+  {% endblock dev_news %}
+  {% endfilter %}
+</div>
 <div style="background-image:url('{{ media_url('images/icons/infra.png') }}');" class="dev-item"/>
   {% filter markdown|typogrify -%}
   {% block dev_infra %}
