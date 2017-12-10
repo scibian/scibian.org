@@ -50,7 +50,7 @@ pre-production environment with last commits to this repository, connect to
 scibian.org server through SSH and run the following commands:
 
 ```
-# cd /local00/git/scibian.org
+# cd /local00/scibian.org
 # git pull github
 # . env/bin/activate
 # hyde gen -c preprod.yml
