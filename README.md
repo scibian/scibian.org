@@ -53,7 +53,7 @@ scibian.org server through SSH and run the following commands:
 # cd /local00/scibian.org
 # git pull github
 # . env/bin/activate
-# hyde gen -c preprod.yml
+# hyde gen -c preprod.yaml
 ```
 
 Then, check of the pre-production website: https://scibian.org/preprod-site/
@@ -61,7 +61,7 @@ Then, check of the pre-production website: https://scibian.org/preprod-site/
 If everything is OK, run the following command to update production website:
 
 ```
-# hyde gen -c prod.yml
+# hyde gen -c prod.yaml
 ```
 
 Finally, check of the production website: https://scibian.org/
