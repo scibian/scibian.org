@@ -29,8 +29,8 @@ cases. Scibian introduces the following version components:
 
 * `scibian_version`: the version number of the Scibian major release, it must
   match `\d{1,2}` (ex: `9`).
-* `scibian_release`: the release number for the package in the Scibian release,
-  it must match `\d+` (ex: `12`).
+* `scibian_revision`: the release number for the package in the Scibian
+  release, it must match `\d+` (ex: `12`).
 
 ## Scibian specific native package
 
@@ -63,8 +63,8 @@ Examples:
 ```
 
 !!! note
-    The `debian_version` must be set to `0` if the package is not imported from
-    Debian but created from scratch for Scibian.
+    The `debian_revision` must be set to `0` if the package is not imported
+    from Debian but created from scratch for Scibian.
 
 Examples:
 
