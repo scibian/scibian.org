@@ -26,38 +26,69 @@ naming conventions, depending on the package type.
 
 ## Debian native packages modified in Scibian
 
-* `master`: last imported version of the code and packaging from Debian.
-* `debian/$codename` *(optional)*: code and packaging for specific Debian
-  releases (ex: `debian/stretch`).
+* `master`: imported version of the code and packaging from Debian for the
+   latest Scibian release.
+* `debian/$codename` *(optional)*: code and packaging from specific Debian
+  releases (ex: `debian/stretch`) if required by previous Scibian releases.
 * `scibian/master`: code and packaging for last Scibian release.
 * `scibian/$release` *(optional)*: code and packaging for previous Scibian
   releases (ex: `scibian/8`).
+
+The `master` and `debian/*` branches must be populated using `gbp import-dsc`.
+These branches are not supposed to contain the full history of commits from the
+Debian maintainers.
 
 ## Scibian specific quilt package
 
-* `upstream` : last imported version of the code as released by upstream
-  developers.
+* `upstream` : imported version of the code as released by upstream developers.
+* `pristine-tar`: binary delta file for pristine upstream tarballs.
 * `scibian/master`: code and packaging for last Scibian release.
 * `scibian/$release` *(optional)*: code and packaging for previous Scibian
   releases (ex: `scibian/8`).
 
-**NOTE:** There is no `master` branch in this context. The default branch in
-GitHub repository settings must be set to `scibian/master`.
+There is no `master` branch in this context. The default branch in GitHub
+repository settings must be set to `scibian/master`.
+
+The `upstream` branch must be populated using `gbp import-orig`. This branch is
+not supposed to contain the full history of commits from the upstream
+developers.
 
 ## Debian quilt package modified in Scibian
 
-* `upstream`: last imported version of the code as released by upstream
-  developers.
-* `master`: last imported version of the code and packaging from Debian.
-* `debian/$codename` *(optional)*: code and packaging for specific Debian
-  releases (ex: `debian/stretch`).
+* `upstream`: imported version of the code as released by upstream developers.
+* `pristine-tar`: binary delta file for pristine upstream tarballs.
+* `master`: imported version of the code and packaging from Debian for the
+  latest Scibian release.
+* `debian/$codename` *(optional)*: code and packaging from specific Debian
+  releases (ex: `debian/stretch`) if required by previous Scibian releases.
 * `scibian/master`: code and packaging for last Scibian release.
 * `scibian/$release` *(optional)*: code and packaging for previous Scibian
   releases (ex: `scibian/8`).
+
+The `upstream`, `master` and `debian/*` branches must be populated using
+`gbp import-dsc`. These branches are not supposed to contain the full history of
+commits from the Debian maintainers.
+
+## General notes
 
 All `debian/*` et `scibian/*` branches of the Git repositories must be buildable
 using [pbuilder](https://pbuilder.alioth.debian.org/) (or similar). Otherwise,
 it must considered as a bug.
+
+The `debian/*` may appear only if the packages of a previous Scibian release
+relies on Debian packages derived from the list of packages imported in the
+`master` branch. The diagram illustrates the case when a `debian/*` branch is
+required:
+
+![Debian branches use-case]({{ media_url('images/branches_debian_examples.svg') }})
+
+If the packages of all the Scibian releases are based on Debian packages
+successively imported in the master branch, there is no reason to have a
+`debian/*` branch (case A). However, if a previous release of Scibian
+requires a new Debian package derived of the master branch (eg. in case B,
+Scibian 8 requires Debian package 1.1-1 **after** 2.0-1 has been imported in
+master branch for Scibian 9), a specific `debian/*` branch must be created to
+hold that specific Debian version of the package.
 
 # Tags
 
