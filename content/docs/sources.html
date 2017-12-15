@@ -106,11 +106,21 @@ naming conventions:
 
 For native packages, there is no `upstream/*` tags.
 
-To create the Scibian releases tag using `git-buildpackage`, run the following
-command:
+To create the Scibian releases tag using `git-buildpackage`, for example in
+`scibian/master` branch, run the following command:
 
 ```
 gbp buildpackage --git-tag-only \
+                 --git-debian-branch=scibian/master \
                  --git-debian-tag='scibian/%(version)s' \
                  --git-debian-tag-msg='%(pkg)s Scibian release %(version)s'
+```
+
+To generate the changelog entries, for example for Scibian 8 in
+`scibian/master` branch, run:
+
+```
+gbp dch --distribution=scibian8 --force-distribution \
+        --debian-branch=scibian/master \
+        --debian-tag='scibian/%(version)s'
 ```
