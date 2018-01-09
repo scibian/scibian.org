@@ -21,8 +21,8 @@ naming conventions, depending on the package type.
 ## Scibian specific native packages
 
 * `master`: code and packaging for last Scibian release.
-* `scibian/$release` *(optional)*: code and packaging for previous Scibian
-  releases (ex: `scibian/8`).
+* `scibian/$codename` *(optional)*: code and packaging for previous Scibian
+  releases (ex: `scibian/jessie`).
 
 ## Debian native packages modified in Scibian
 
@@ -31,8 +31,8 @@ naming conventions, depending on the package type.
 * `debian/$codename` *(optional)*: code and packaging from specific Debian
   releases (ex: `debian/stretch`) if required by previous Scibian releases.
 * `scibian/master`: code and packaging for last Scibian release.
-* `scibian/$release` *(optional)*: code and packaging for previous Scibian
-  releases (ex: `scibian/8`).
+* `scibian/$codename` *(optional)*: code and packaging for previous Scibian
+  releases (ex: `scibian/jessie`).
 
 The `master` and `debian/*` branches must be populated using `gbp import-dsc`.
 These branches are not supposed to contain the full history of commits from the
@@ -45,8 +45,8 @@ The default branch in GitHub repository settings must be set to `scibian/master`
 * `upstream` : imported version of the code as released by upstream developers.
 * `pristine-tar`: binary delta file for pristine upstream tarballs.
 * `scibian/master`: code and packaging for last Scibian release.
-* `scibian/$release` *(optional)*: code and packaging for previous Scibian
-  releases (ex: `scibian/8`).
+* `scibian/$codename` *(optional)*: code and packaging for previous Scibian
+  releases (ex: `scibian/jessie`).
 
 The `upstream` branch must be populated using `gbp import-orig`. This branch is
 not supposed to contain the full history of commits from the upstream
@@ -63,8 +63,8 @@ The default branch in GitHub repository settings must be set to `scibian/master`
 * `debian/$codename` *(optional)*: code and packaging from specific Debian
   releases (ex: `debian/stretch`) if required by previous Scibian releases.
 * `scibian/master`: code and packaging for last Scibian release.
-* `scibian/$release` *(optional)*: code and packaging for previous Scibian
-  releases (ex: `scibian/8`).
+* `scibian/$codename` *(optional)*: code and packaging for previous Scibian
+  releases (ex: `scibian/jessie`).
 
 The `upstream`, `master` and `debian/*` branches must be populated using
 `gbp import-dsc`. These branches are not supposed to contain the full history of
