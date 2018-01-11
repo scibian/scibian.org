@@ -44,7 +44,11 @@ context:
                 css_class: news
                 type: page
                 url: blog/index.html
-
+            -
+                name: Updates
+                description: Packages Updates
+                type: url
+                url: updates.html
             -
                 name: About
                 description: About
