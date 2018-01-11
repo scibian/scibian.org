@@ -135,24 +135,44 @@ REMOVE_FROM_RELEASE=true
 UNRELEASED_APPEND_COMMIT=false
 ```
 
-Then setup Jenkins in `/etc/default/jenkins`:
+Then setup Jenkins in `/etc/default/jenkins` with the following modifications:
 
 ```
-NAME=jenkins
-JAVA=/usr/bin/java
-JAVA_ARGS="-Djava.awt.headless=true"  # Allow graphs etc. to work even when an X server is present
-PIDFILE=/var/run/$NAME/$NAME.pid
-JENKINS_USER=$NAME
-JENKINS_GROUP=$NAME
-JENKINS_WAR=/usr/share/$NAME/$NAME.war
-JENKINS_HOME=/local00/$NAME
-RUN_STANDALONE=true
-JENKINS_LOG=/var/log/$NAME/$NAME.log
-MAXOPENFILES=8192
-HTTP_PORT=8080
-PREFIX=/$NAME
-JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --httpListenAddress=127.0.0.1 --prefix=$PREFIX"
+--- a/etc/default/jenkins
++++ b/etc/default/jenkins
+@@ -4,12 +4,13 @@
+ NAME=jenkins
+ 
+ # location of java
+-JAVA=/usr/bin/java
++JAVA=/usr/lib/jvm/java-8-openjdk-amd64/bin/java
+ 
+ # arguments to pass to java
+ 
+ # Allow graphs etc. to work even when an X server is present
+-JAVA_ARGS="-Djava.awt.headless=true"
++# Disable DNS multicast to avoid this bug: https://issues.jenkins-ci.org/browse/JENKINS-29490
++JAVA_ARGS="-Djava.awt.headless=true -Dhudson.DNSMultiCast.disabled=true"
+ 
+ #JAVA_ARGS="-Xmx256m"
+ 
+@@ -26,7 +27,7 @@
+ JENKINS_WAR=/usr/share/$NAME/$NAME.war
+ 
+ # jenkins home location
+-JENKINS_HOME=/var/lib/$NAME
++JENKINS_HOME=/local00/$NAME
+ 
+ # set this to false if you don't want Jenkins to run by itself
+ # in this set up, you are expected to provide a servlet container
+@@ -75,4 +76,4 @@
+ # --webroot=~/.jenkins/war
+ # --prefix=$PREFIX
+ 
+-JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT"
++JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --httpListenAddress=127.0.0.1 --prefix=$PREFIX"
 ```
+
 Connect to the [Jenkins plugin manager](https://scibian.org/jenkins/pluginManager/) then
 select the following plugin for installation:
 
