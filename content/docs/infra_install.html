@@ -308,6 +308,27 @@ And run:
 cd scibian-build-tools && make install
 ```
 
+# Lintian checks
+
+Add Scibian packages repository in APT configuration:
+
+```
+cat <<EOF > /etc/apt/sources.list.d/scibian.list
+deb http://scibian.org/repo scibian8 main
+```
+
+Install Scibian keyring:
+
+```
+apt-get install --allow-unauthenticated scibian-archive-keyring
+```
+
+Install Scibian specific lintian checks:
+
+```
+apt-get install scibian-lintian
+```
+
 # Backups
 
 How-to install/setup backups? TBD
