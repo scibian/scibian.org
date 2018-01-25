@@ -329,6 +329,32 @@ Install Scibian specific lintian checks:
 apt-get install scibian-lintian
 ```
 
+# Clara
+
+[Clara](https://github.com/edf-hpc/clara) is a useful tool notably to manage
+debian repositories with high-level CLI interface. Install clara with its repo
+plugin:
+
+```
+apt-get install clara-core clara-plugin-repo
+```
+
+Then edit `/etc/clara/config.ini`:
+
+```
+[common]
+allowed_distributions=scibian8,scibian9
+default_distribution=scibian8
+origin=Scibian
+
+[repo]
+repo_dir=/local00/repo
+mirror_local=/local00/repo
+gpg_key=<KEYID>
+```
+
+Where `<KEYID>` is the ID of the repository signing GPG key.
+
 # Backups
 
 How-to install/setup backups? TBD

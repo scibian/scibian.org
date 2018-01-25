@@ -14,3 +14,32 @@ The repository signing key: how-to renew? TBD
 # Backups
 
 How to restore backups? TBD
+
+# Manage repositories content
+
+Use the clara utility to manage manually the content of Scibian package
+repository. For exemple:
+
+* List the packages of the `scibian9` distribution:
+
+```
+clara repo list scibian9
+```
+
+* Add packages to the `scibian8̀  distribution:
+
+```
+clara repo add scibian8 <file>.changes
+```
+
+* Remove packages to the `scibian9`  distribution:
+
+```
+clara repo add scibian9 <package>
+```
+
+Please do NOT use `clara repo init` on the scibian.org server as distributions
+must be added dynamically by `jenkins-debian-glue` only. Otherwise, it would
+messes the repository distributions configuration file.
+
+Please refer to `clara-repo` manpage for more information.
