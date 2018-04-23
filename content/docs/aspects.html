@@ -1,0 +1,177 @@
+---
+title: Aspects Packages Development
+subtitle:
+---
+
+# Overview
+
+Scibian Aspects are additional packages provided in specific distributions of
+Scibian packages repository. Users can select and enable aspects with the
+corresponding [APT sources](https://wiki.debian.org/SourcesList) depending
+on their requirements. This is a modular system to easily control which
+components and versions are actually installed on Scibian systems.
+
+# Use-case
+
+Aspects are used when packages cannot be installed on all Scibian systems. This
+can happen for two reasons:
+
+* A version of a package is specific to a hardware equipment model and may
+  break support of another model.
+* Scibian project wants to publish multiple conflicting versions of a package
+  for a Scibian release.
+
+If a package can be installed without trouble on all Scibian systems, it must
+not be distributed in the form of an aspect.
+
+# Names
+
+An aspect has a short name which must be unique over the Scibian project
+representing both the content and the main version of the aspect.
+
+The aspect names must match the following regular expression: `^[a-z]+[0-9.]+$`
+
+Some examples:
+
+* `nv375`
+* `opa10.5`
+* `mlnx4.2`
+
+This aspect name is designated with `$aspect` placeholder in the next sections
+of this document.
+
+# Sources Management 
+
+Aspects packages follow the generic Scibian packages [sources management
+conventions]({{ content_url('/docs/sources.html') }}). The following
+subsections describe the few exceptions to these rules.
+
+## Branches
+
+The Git repositories of the sources packages distributed in aspects must
+contain the following branches:
+
+* `upstream/$aspect`: imported version of the code as released by upstream
+  developers for the aspect.
+* `debian/$aspect` *(optional)*: imported version of the code and packaging
+  from Debian (basis for packages of the aspect in the latest Scibian release).
+* `scibian/$aspect/$codename`:  code and packaging for the aspect in a Scibian
+  release.
+* `pristine-tar`: binary delta file for pristine upstream tarballs.
+
+The `debian/$aspect` branch is present only if the package is imported from
+Debian. If the package is developed from scratch for Scibian, this branch is
+absent from the Git repository.
+
+Multiple aspects of the same source package must be maintained in the same Git
+repository. A Git repository can safely maintain multiple aspects of a package.
+For example, aspects `mlnx4.2` and `opa10.5` can safely coexist in the same Git
+repository. In this case, each aspect has its own branches, except the
+`pristine-tar` branch common to all aspects of a package.
+
+Somes examples :
+
+**Exemple 1 :** `nvidia-graphics-module` version 375 in Scibian 8
+
+Scibian 8 provides `nvidia-graphics-module` version 340 but Scibian project
+also wants to publish version 375 to support latest graphic cards models. The
+newer release cannot replace the older because it breaks support of some
+previous graphic card models. In this case, the Scibian projects publishes the
+`nvidia-graphics-module` version 375 within an aspect, for example `nv375`. The
+source package is imported from Debian (ex: Debian sid). In this case, the Git
+repository must contain the following branches:
+
+* `upstream/nv375` : code as released by the upstream developers.
+* `debian/nv375` : code and packaging from Debian for the aspect.
+* `scibian/nv375/jessie` : code and package for the aspect in Scibian 8
+* `pristine-tar`: binary delta file for pristine upstream tarballs.
+
+**Exemple 2 :** `gpfs` 3.5 and 4.2 in Scibian 8
+
+The Scibian project wants to publish the GPFS software in versions 3.5 and 4.2
+for Scibian 8. The software editor provides the source tarballs without
+packaging code. The packaging code must be developed from scratch by the
+Scibian project. The aspects can be named `gpfs3.5` and `gpfs4.2`. The Git
+repository must contain the following branches:
+
+* `upstream/gpfs3.5`: code as released by the upstream developers for version 3.5.
+* `upstream/gpfs4.2`: code as released by the upstream developers for version 4.2.
+* `scibian/gpfs3.5/jessie`: code and packaging for version 3.5 in Scibian 8.
+* `scibian/gpfs4.2/jessie`: code and packaging for version 4.2 in Scibian 8.
+* `pristine-tar`: binary delta file for pristine upstream tarballs.
+
+**Exemple 3:** `libumad` from different stacks and multiple Scibian releases
+
+The `libumad` package is distributed as Debian packages by both Mellanox and
+Intel within their respective low-latency network software stacks. The Scibian
+project wants to distribute `libumad` from Intel OPA 10.5 for Scibian 8 and
+`libumad` from Mellanox OFED 4.2 for Scibian 8 and Scibian 9. The aspects can
+be named `opa10.5` and `mlnx4.2`. In this case, the Git repository must contain
+the following branches:
+
+* `upstream/opa10.5`: code as released in Intel OPA 10.5 stack.
+* `upstream/mlnx4.2`: code as release in Mellanox OFED 4.2 stack.
+* `debian/opa10.5` : code and debian packaging as released in Intel 10.5 stack.
+* `debian/mlnx4.2`: code and debian packaging as release in Mellanox OFED 4.2
+  stack.
+* `scibian/opa10.5/jessie`: code and packaging for aspect `opa10.5` in
+  Scibian 8.
+* `scibian/mlnx4.2/jessie`: code and packaging for aspect `mlnx4.2` in
+  Scibian 8.
+* `scibian/mlnx4.2/wheezy`: code and packaging for aspect `mlnx4.2` in
+  Scibian 9.
+* `pristine-tar`: binary delta file for pristine upstream tarballs.
+
+## Tags
+
+The tags must respect the following format:
+`{upstream,debian,scibian}/$aspect/$version`
+
+Some examples :
+
+* `upstream/opa10.5/10.5.2`
+* `debian/opa10.5/10.5.2-1`
+* `scibian/opa10.5/10.5.2-1sci8+opa10.5u1`
+
+# Packaging Conventions
+
+Aspects packages follow the generic Scibian [packaging
+conventions]({{ content_url('/docs/pkgs.html') }}). The following subsections
+describe the few exceptions to these rules.
+
+## Versions
+
+The versions of the packages distributed in aspects must respect the following
+format:
+
+```
+[epoch:]<upstream_version>-<debian_revision>sci<scibian_version>+<aspect>u<scibian_release>
+```
+
+Where `<aspect>` is the name of the aspect.
+
+Some examples :
+
+* `1.2.3-1` released in Debian → `1.2.3-1sci8+opa10.5u1` for 1<sup>st</sup>
+  release of a package in aspect `opa10.5` for Scibian 8, `1.2.3-1sci9+nv375u3`
+  for 3<sup>rd</sup> release in aspect `nv375` for Scibian 9.
+* `1.2.3` released upstream → `1.2.3-0sci8+opa10.5u1` for 1<sup>st</sup>
+  release in aspect `opa10.5` for Scibian 8.
+
+It is more convenient if packages distributed in aspects have greater version
+number then the same packages in the corresponding Scibian release, if any.
+However, this is not a hard requirement as APT must be setup with higher
+priority for aspects.
+
+## Distribution
+
+In the `debian/changelog` file, the distribution of the entries must respect thefollowing format:
+
+```
+scibian<X>+<aspect>
+```
+
+Some examples:
+
+* `scibian8+opa10.5`
+* `scibian9+nv375`

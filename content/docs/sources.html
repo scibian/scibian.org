@@ -74,6 +74,12 @@ commits from the Debian maintainers.
 The default branch in GitHub repository settings must be set to the latest
 Scibian release branch.
 
+## Aspects packages
+
+The conventions for the branches of packages distributed in aspects are
+documented in the dedicated [aspects packages
+development]({{ content_url('/docs/aspects.html') }}) page.
+
 ## General notes
 
 All `debian/*` et `scibian/*` branches of the Git repositories must be buildable
@@ -108,21 +114,25 @@ naming conventions:
 
 For native packages, there is no `upstream/*` tags.
 
-To create the Scibian releases tag using `git-buildpackage`, for example in
-`scibian/master` branch, run the following command:
+For packages distributed in aspects, there is a specific tag format documented
+in the dedicated [aspects packages
+development]({{ content_url('/docs/aspects.html') }}) page.
+
+To create the Scibian releases tag using `git-buildpackage`, for example for
+Scibian 9 in `scibian/stretch` branch, run the following command:
 
 ```
 gbp buildpackage --git-tag-only \
-                 --git-debian-branch=scibian/master \
+                 --git-debian-branch=scibian/stretch \
                  --git-debian-tag='scibian/%(version)s' \
                  --git-debian-tag-msg='%(pkg)s Scibian release %(version)s'
 ```
 
-To generate the changelog entries, for example for Scibian 8 in
-`scibian/master` branch, run:
+To generate the changelog entries, for example for Scibian 9 in
+`scibian/stretch` branch, run:
 
 ```
 gbp dch --distribution=scibian8 --force-distribution \
-        --debian-branch=scibian/master \
+        --debian-branch=scibian/stretch \
         --debian-tag='scibian/%(version)s'
 ```
