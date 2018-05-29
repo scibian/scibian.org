@@ -196,10 +196,10 @@ apt-get install nginx
 ```
 
 Then install Let's encrypt `certbot` utility from the Jessie backports
-repository:
+repository with its nginx plugin:
 
 ```
-apt-get install -t jessie-backports certbot
+apt-get install -t jessie-backports certbot python-certbot-nginx
 ```
 
 Setup `certbot` in `/etc/letsencrypt/renewal/scibian.org.conf`:
@@ -211,12 +211,9 @@ privkey = /etc/letsencrypt/live/scibian.org/privkey.pem
 chain = /etc/letsencrypt/live/scibian.org/chain.pem
 fullchain = /etc/letsencrypt/live/scibian.org/fullchain.pem
 [renewalparams]
-authenticator = webroot
-installer = None
+authenticator = nginx
+installer = nginx
 account = <account>
-[[webroot_map]]
-www.scibian.org = /local00/www
-scibian.org = /local00/www
 ```
 
 !!! note
@@ -234,7 +231,7 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/scibian.org/privkey.pem;
     root /local00/www;
     index index.html index.htm index.nginx-debian.html;
-    server_name scibian.org;
+    server_name scibian.org www.scibian.org;
     location / {
         # First attempt to serve request as file, then
         # as directory, then fall back to displaying a 404.
