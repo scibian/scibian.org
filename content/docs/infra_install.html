@@ -128,11 +128,19 @@ Setup `jenkins-debian-glue` in `/etc/jenkins/debian_glue`:
 
 ```
 MAIN_ARCHITECTURE="amd64"
+PBUILDER_CONFIG=/etc/jenkins/pbuilderrc
 DEFAULT_REPOSITORY='/local00/repo-ci'
 USE_ORIG_VERSION=true
 RELEASE_REPOSITORY='/local00/repo'
 REMOVE_FROM_RELEASE=true
 UNRELEASED_APPEND_COMMIT=false
+```
+
+Create extra pbuilder configuration file `/etc/jenkins/pbuilderrc` with the
+following content to enable debian security mirror in build environments:
+
+```
+OTHERMIRROR="deb http://debian.mirrors.ovh.net/debian-security/ ${DIST}/updates main"
 ```
 
 Then setup Jenkins in `/etc/default/jenkins` with the following modifications:
