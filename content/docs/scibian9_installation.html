@@ -1,0 +1,81 @@
+---
+title: Scibian 9 Installation
+subtitle: 
+---
+
+This documents describes how to install Scibian Linux on a single desktop machine.
+
+# Manual installation
+
+The manual installation process consists in first installing a regular Debian system and then adding Scibian packages over it.
+
+## Debian Stretch installation
+
+Download an official Debian Stretch install media from <https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/> for the amd64 architecture.
+
+Install a minimal system: when asked for which software you wish to install, uncheck everything except "standard system utilities" and "SSH server" if you need it.
+
+![debian stretch installation]({{ media_url('images/debian-stretch-software-selection.png') }})
+
+If you need any assitance with Debian installation, you can refer to the official installation manual: <https://www.debian.org/releases/stretch/amd64/>
+
+## Scibian installation
+
+Boot you newly installed Debian system and login as `root`.
+
+Add the contrib and non-free sections to the Debian APT sources:
+```
+sed -i 's/ main/ main contrib non-free/' /etc/apt/sources.list
+```
+
+Add the Scibian reposity to APT sources:
+
+```
+cat >> /etc/apt/sources.list << EOF
+deb http://scibian.org/repo/ scibian9 main
+EOF
+```
+
+Trust the Scibian archive GPG signing key by issuing this command:
+
+```
+wget https://scibian.org/repo/scibian-auto-keyring.pub -O- | apt-key add -
+```
+
+Make sure Scibian versions of packages have priority over Debian versions.
+
+```
+cat >> /etc/apt/preferences.d/00scibian << EOF
+Package: *
+Pin: release o=Scibian
+Pin-Priority: 1001
+EOF
+```
+
+Update the package lists:
+
+```
+apt-get update
+```
+
+You are now ready to install Scibian packages over your existing Debian installation:
+
+```
+apt-get install scibian-standard scibian-desktop
+```
+
+or if you wish to include non-free components:
+
+```
+apt-get install scibian-desktop-non-free
+```
+
+This step might take a long time to install all the packages and might in some cases downgrade some packages.
+
+Once `scibian-desktop` is installed, reboot the machine to take into account the new kernel.
+
+You're now ready to use Scibian !
+
+# Automatic installation
+
+Documentation for automated installations is coming soon.
