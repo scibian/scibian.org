@@ -219,9 +219,13 @@ privkey = /etc/letsencrypt/live/scibian.org/privkey.pem
 chain = /etc/letsencrypt/live/scibian.org/chain.pem
 fullchain = /etc/letsencrypt/live/scibian.org/fullchain.pem
 [renewalparams]
-authenticator = nginx
+authenticator = webroot
 installer = nginx
 account = <account>
+
+[[webroot_map]]
+www.scibian.org = /local00/www
+scibian.org = /local00/www
 ```
 
 !!! note
