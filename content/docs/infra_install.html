@@ -381,24 +381,17 @@ common:
   -g var
   -g srv
   -g local00
-
   -B /etc/darrc.skiplist
-
   # batch mode, no interactive questions
   -Q
-
   # do not warn before overwriting old backup slices
   -w
-
   # store empty directories
   -D
-
   # crypt backups
   -K XXXXXXXXXXXXXX
-
   # compress backups
   -z
-
   # avoid compressing already compressed files
   -Z '*.Z'
   -Z '*.bz2'
@@ -408,11 +401,9 @@ common:
   -Z '*.mpg'
   -Z '*.tgz'
   -Z '*.zip'
-
 incr:
   # crypt backups
   -J XXXXXXXXXXXXXX
-
 content:
   # crypt backups
   -K XXXXXXXXXXXXXX
@@ -426,16 +417,12 @@ Some files or paths are excluded from backups. This is specified in
 
 ```
 -P var/cache
-
 -P local00/backups
-
 -P local00/pbuilder
 -P local00/git
--P local00/git-backup-before-cleaning
 -P local00/mirror
 -P local00/repo
 -P local00/repo-ci
-
 -P local00/jenkins/jobs
 -P local00/jenkins/workspace
 ```
@@ -448,7 +435,6 @@ configured using a configuration file `/root/backup/backup.conf`:
 BACKUP_DIR="/local00/backups"
 BACKUP_TAG="scibian.org_slash"
 BACKUP_NAME="$BACKUP_DIR/${BACKUP_TAG}"
-
 BACKUP_FTP_HOST="..."
 BACKUP_FTP_USER="..."
 BACKUP_FTP_PASS="..."
@@ -459,8 +445,8 @@ The last 3 parameters are provided by OVH.
 Finally, `backupload` is cronned to make one backup every day:
 
 ```
-# crontab -l | grep backup
-0 3 * * * cronic /root/backup/backupload
+ # crontab -l | grep backup
+ 0 3 * * * cronic /root/backup/backupload
 ```
 
 `backupload` makes a full backup on Sundays and incremental backups
