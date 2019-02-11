@@ -13,7 +13,7 @@ This document provides all steps to install and setup the scibian.org server.
 # Base installation
 
 The scibian.org is a dedicated server hosted in a [OVH](https://www.ovh.com)
-datacenter. It is installed with Debian 8 *Jessie* using OVH remote
+datacenter. It is installed with Debian 9 *Stretch* using OVH remote
 installation utility.
 
 # APT sources
@@ -21,14 +21,14 @@ installation utility.
 Modify the content of `/etc/apt/sources.list` file with:
 
 ```
-deb http://security.debian.org/ jessie/updates main
-deb-src http://security.debian.org/ jessie/updates main
-deb http://debian.mirrors.ovh.net/debian/ jessie-updates main
-deb-src http://debian.mirrors.ovh.net/debian/ jessie-updates main
-deb http://debian.mirrors.ovh.net/debian/ jessie-backports main
-deb-src http://debian.mirrors.ovh.net/debian/ jessie-backports main
-deb http://debian.mirrors.ovh.net/debian/ jessie main contrib non-free
-deb-src http://debian.mirrors.ovh.net/debian/ jessie main contrib non-free
+deb http://security.debian.org/ stretch/updates main
+deb-src http://security.debian.org/ stretch/updates main
+deb http://debian.mirrors.ovh.net/debian/ stretch-updates main
+deb-src http://debian.mirrors.ovh.net/debian/ stretch-updates main
+deb http://debian.mirrors.ovh.net/debian/ stretch-backports main
+deb-src http://debian.mirrors.ovh.net/debian/ stretch-backports main
+deb http://debian.mirrors.ovh.net/debian/ stretch main contrib non-free
+deb-src http://debian.mirrors.ovh.net/debian/ stretch main contrib non-free
 ```
 
 Add jenkins upstream APT repositories in
@@ -203,17 +203,17 @@ Install Nginx HTTP server:
 apt-get install nginx
 ```
 
-Then install Let's encrypt `certbot` utility from the Jessie backports
+Then install Let's encrypt `certbot` utility from the Stretch backports
 repository with its nginx plugin:
 
 ```
-apt-get install -t jessie-backports certbot python-certbot-nginx
+apt-get install -t stretch-backports certbot python-certbot-nginx
 ```
 
 Setup `certbot` in `/etc/letsencrypt/renewal/scibian.org.conf`:
 
 ```
-version = 0.8.1
+version = 0.10.2
 cert = /etc/letsencrypt/live/scibian.org/cert.pem
 privkey = /etc/letsencrypt/live/scibian.org/privkey.pem
 chain = /etc/letsencrypt/live/scibian.org/chain.pem
