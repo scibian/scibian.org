@@ -1,0 +1,79 @@
+#!/bin/bash
+
+exec 1> >(logger -s -t $(basename $0)) 2>&1
+
+ulimit -d unlimited
+ulimit -m unlimited
+ulimit -s unlimited
+
+PROGNAME=`basename $0`
+if [ -f /var/lock/$PROGNAME ]; then
+    if [ `pgrep -F /var/lock/$PROGNAME -c` -gt 0 ]; then
+        echo $PROGNAME already running
+        exit 0
+    fi
+fi
+echo $$ > /var/lock/$PROGNAME
+
+CONF=/root/backup/backup.conf
+if [ -f "$CONF" ] ; then
+    . "$CONF"
+else
+    echo "EE Can't find backup configuration file: $CONF"
+    exit 1
+fi
+
+dow=`date +"%w"`
+exit_code=0
+if [ $dow -eq 0 ]; then
+    ftp_name="${BACKUP_NAME}_incr0.1.dar"
+
+    echo "** Starting up full backup in $ftp_name"
+    dar -c "${BACKUP_NAME}_incr0" -R / common
+    exit_code=$?
+else
+    ftp_name="${BACKUP_NAME}_incr${dow}.1.dar"
+
+    refno=$(($dow-1))
+    refbackup="${BACKUP_NAME}_incr$refno"
+    if [ -f "${refbackup}.1.dar" ]; then
+        echo "** Starting up incremental-$dow backup in $ftp_name"
+        dar -c "${BACKUP_NAME}_incr$dow" -R / -A "$refbackup" common incr
+        exit_code=$?
+    else
+        echo "WW Last backup ${refbackup}.1.dar was not found. Doing a full backup!"
+        echo "** Starting up full backup in $ftp_name"
+        dar -c "${BACKUP_NAME}_incr$dow" -R / common
+        exit_code=$?
+    fi
+fi
+
+case $exit_code in
+    2|3|4|5|6|9)
+        echo "EE Dar returned non 0 exit code (ERR=$exit_code)";
+        exit 2;;
+    *)
+        echo "** Dar backup finished successfully";;
+esac
+
+cd $BACKUP_DIR
+
+# Backup file checsum
+sha_name="${ftp_name}.sha1"
+sha1sum `basename $ftp_name` > $sha_name
+
+# List of backuped files
+lst_name="${ftp_name}.list"
+dar -l "${BACKUP_NAME}_incr$dow" content > $lst_name
+
+echo "** Uploading $ftp_name"
+curl -s -S -T "$ftp_name" \
+    -u $BACKUP_FTP_USER:$BACKUP_FTP_PASS \
+    "ftp://$BACKUP_FTP_HOST/`basename $ftp_name`"
+if [ $? -eq 0 ]; then
+    rm -f $sha_name
+    echo "** Done"
+else
+    echo "EE Dar backup upload failed!"
+    exit 3
+fi

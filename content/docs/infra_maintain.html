@@ -13,7 +13,14 @@ The repository signing key: how-to renew? TBD
 
 # Backups
 
-How to restore backups? TBD
+Backups are located in `/local00/backups` or uploaded on OVH's FTP backup
+service, in case of disaster recovery. Encryption passphrase is stored in
+/etc/darrc` and lets you read encrypted backups and encrypt newly produced
+backup files.
+
+To extract a [DAR](http://dar.sourceforge.net) backup, simply run
+`dar -x .../path/to/dar_file -R /`. The last parameter tells DAR where to
+extract the backup.
 
 # Manage repositories content
 

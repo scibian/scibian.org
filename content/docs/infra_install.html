@@ -366,7 +366,106 @@ Where `<KEYID>` is the ID of the repository signing GPG key.
 
 # Backups
 
-How-to install/setup backups? TBD
+Backups are generated using [DAR](http://dar.sourceforge.net) and a custom
+backup script `/root/backup/backupload`.
+
+Once DAR installed using APT, you need to provide the following configuration
+to DAR in `/etc/darrc`:
+
+```
+common:
+  # paths to backup (relative to backup root)
+  -g etc
+  -g home
+  -g root
+  -g var
+  -g srv
+  -g local00
+
+  -B /etc/darrc.skiplist
+
+  # batch mode, no interactive questions
+  -Q
+
+  # do not warn before overwriting old backup slices
+  -w
+
+  # store empty directories
+  -D
+
+  # crypt backups
+  -K XXXXXXXXXXXXXX
+
+  # compress backups
+  -z
+
+  # avoid compressing already compressed files
+  -Z '*.Z'
+  -Z '*.bz2'
+  -Z '*.gz'
+  -Z '*.jpg'
+  -Z '*.mp3'
+  -Z '*.mpg'
+  -Z '*.tgz'
+  -Z '*.zip'
+
+incr:
+  # crypt backups
+  -J XXXXXXXXXXXXXX
+
+content:
+  # crypt backups
+  -K XXXXXXXXXXXXXX
+```
+
+The encryption passphrase given using `-J` and `-K` cli flags has to
+be recovered (to be able to read old backups) or regenerated.
+
+Some files or paths are excluded from backups. This is specified in
+`/etc/darrc.skiplist`:
+
+```
+-P var/cache
+
+-P local00/backups
+
+-P local00/pbuilder
+-P local00/git
+-P local00/git-backup-before-cleaning
+-P local00/mirror
+-P local00/repo
+-P local00/repo-ci
+
+-P local00/jenkins/jobs
+-P local00/jenkins/workspace
+```
+
+The actual backup is performed using a custom `backupload` script
+which can be found in <https://github.com/scibian/scibian.org/tree/master/scripts> and is
+configured using a configuration file `/root/backup/backup.conf`:
+
+```
+BACKUP_DIR="/local00/backups"
+BACKUP_TAG="scibian.org_slash"
+BACKUP_NAME="$BACKUP_DIR/${BACKUP_TAG}"
+
+BACKUP_FTP_HOST="..."
+BACKUP_FTP_USER="..."
+BACKUP_FTP_PASS="..."
+```
+
+The last 3 parameters are provided by OVH.
+
+Finally, `backupload` is cronned to make one backup every day:
+
+```
+# crontab -l | grep backup
+0 3 * * * cronic /root/backup/backupload
+```
+
+`backupload` makes a full backup on Sundays and incremental backups
+otherwise. If last backup is not found, it creates a new full backup. It logs
+everything to syslog using `logger`.
 
 # Monitoring
 
