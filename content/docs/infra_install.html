@@ -13,7 +13,7 @@ This document provides all steps to install and setup the scibian.org server.
 # Base installation
 
 The scibian.org is a dedicated server hosted in a [OVH](https://www.ovh.com)
-datacenter. It is installed with Debian 8 *Jessie* using OVH remote
+datacenter. It is installed with Debian 9 *Stretch* using OVH remote
 installation utility.
 
 # APT sources
@@ -21,14 +21,14 @@ installation utility.
 Modify the content of `/etc/apt/sources.list` file with:
 
 ```
-deb http://security.debian.org/ jessie/updates main
-deb-src http://security.debian.org/ jessie/updates main
-deb http://debian.mirrors.ovh.net/debian/ jessie-updates main
-deb-src http://debian.mirrors.ovh.net/debian/ jessie-updates main
-deb http://debian.mirrors.ovh.net/debian/ jessie-backports main
-deb-src http://debian.mirrors.ovh.net/debian/ jessie-backports main
-deb http://debian.mirrors.ovh.net/debian/ jessie main contrib non-free
-deb-src http://debian.mirrors.ovh.net/debian/ jessie main contrib non-free
+deb http://security.debian.org/ stretch/updates main
+deb-src http://security.debian.org/ stretch/updates main
+deb http://debian.mirrors.ovh.net/debian/ stretch-updates main
+deb-src http://debian.mirrors.ovh.net/debian/ stretch-updates main
+deb http://debian.mirrors.ovh.net/debian/ stretch-backports main
+deb-src http://debian.mirrors.ovh.net/debian/ stretch-backports main
+deb http://debian.mirrors.ovh.net/debian/ stretch main contrib non-free
+deb-src http://debian.mirrors.ovh.net/debian/ stretch main contrib non-free
 ```
 
 Add jenkins upstream APT repositories in
@@ -128,6 +128,7 @@ Setup `jenkins-debian-glue` in `/etc/jenkins/debian_glue`:
 
 ```
 MAIN_ARCHITECTURE="amd64"
+PBUILDER_CONFIG=/etc/jenkins/pbuilderrc
 DEFAULT_REPOSITORY='/local00/repo-ci'
 USE_ORIG_VERSION=true
 RELEASE_REPOSITORY='/local00/repo'
@@ -135,24 +136,51 @@ REMOVE_FROM_RELEASE=true
 UNRELEASED_APPEND_COMMIT=false
 ```
 
-Then setup Jenkins in `/etc/default/jenkins`:
+Create extra pbuilder configuration file `/etc/jenkins/pbuilderrc` with the
+following content to enable debian security mirror in build environments:
 
 ```
-NAME=jenkins
-JAVA=/usr/bin/java
-JAVA_ARGS="-Djava.awt.headless=true"  # Allow graphs etc. to work even when an X server is present
-PIDFILE=/var/run/$NAME/$NAME.pid
-JENKINS_USER=$NAME
-JENKINS_GROUP=$NAME
-JENKINS_WAR=/usr/share/$NAME/$NAME.war
-JENKINS_HOME=/local00/$NAME
-RUN_STANDALONE=true
-JENKINS_LOG=/var/log/$NAME/$NAME.log
-MAXOPENFILES=8192
-HTTP_PORT=8080
-PREFIX=/$NAME
-JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --httpListenAddress=127.0.0.1 --prefix=$PREFIX"
+OTHERMIRROR="deb http://debian.mirrors.ovh.net/debian-security/ ${DIST}/updates main"
 ```
+
+Then setup Jenkins in `/etc/default/jenkins` with the following modifications:
+
+```
+--- a/etc/default/jenkins
++++ b/etc/default/jenkins
+@@ -4,12 +4,13 @@
+ NAME=jenkins
+ 
+ # location of java
+-JAVA=/usr/bin/java
++JAVA=/usr/lib/jvm/java-8-openjdk-amd64/bin/java
+ 
+ # arguments to pass to java
+ 
+ # Allow graphs etc. to work even when an X server is present
+-JAVA_ARGS="-Djava.awt.headless=true"
++# Disable DNS multicast to avoid this bug: https://issues.jenkins-ci.org/browse/JENKINS-29490
++JAVA_ARGS="-Djava.awt.headless=true -Dhudson.DNSMultiCast.disabled=true"
+ 
+ #JAVA_ARGS="-Xmx256m"
+ 
+@@ -26,7 +27,7 @@
+ JENKINS_WAR=/usr/share/$NAME/$NAME.war
+ 
+ # jenkins home location
+-JENKINS_HOME=/var/lib/$NAME
++JENKINS_HOME=/local00/$NAME
+ 
+ # set this to false if you don't want Jenkins to run by itself
+ # in this set up, you are expected to provide a servlet container
+@@ -75,4 +76,4 @@
+ # --webroot=~/.jenkins/war
+ # --prefix=$PREFIX
+ 
+-JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT"
++JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --httpListenAddress=127.0.0.1 --prefix=$PREFIX"
+```
+
 Connect to the [Jenkins plugin manager](https://scibian.org/jenkins/pluginManager/) then
 select the following plugin for installation:
 
@@ -175,25 +203,26 @@ Install Nginx HTTP server:
 apt-get install nginx
 ```
 
-Then install Let's encrypt `certbot` utility from the Jessie backports
-repository:
+Then install Let's encrypt `certbot` utility from the Stretch backports
+repository with its nginx plugin:
 
 ```
-apt-get install -t jessie-backports certbot
+apt-get install -t stretch-backports certbot python-certbot-nginx
 ```
 
 Setup `certbot` in `/etc/letsencrypt/renewal/scibian.org.conf`:
 
 ```
-version = 0.8.1
+version = 0.10.2
 cert = /etc/letsencrypt/live/scibian.org/cert.pem
 privkey = /etc/letsencrypt/live/scibian.org/privkey.pem
 chain = /etc/letsencrypt/live/scibian.org/chain.pem
 fullchain = /etc/letsencrypt/live/scibian.org/fullchain.pem
 [renewalparams]
 authenticator = webroot
-installer = None
+installer = nginx
 account = <account>
+
 [[webroot_map]]
 www.scibian.org = /local00/www
 scibian.org = /local00/www
@@ -214,7 +243,7 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/scibian.org/privkey.pem;
     root /local00/www;
     index index.html index.htm index.nginx-debian.html;
-    server_name scibian.org;
+    server_name scibian.org www.scibian.org;
     location / {
         # First attempt to serve request as file, then
         # as directory, then fall back to displaying a 404.
@@ -273,7 +302,7 @@ How-to bootstrap the repository (with GPG key)? TBD
 
 How-to deploy the website? TBD
 
-# Jenkins jobs
+# Scibian Jenkins jobs synchronization and feed
 
 Clone `scibian-build-tools` repository locally, for example in root home
 directory:
@@ -288,9 +317,141 @@ And run:
 cd scibian-build-tools && make install
 ```
 
+# Lintian checks
+
+Add Scibian packages repository in APT configuration:
+
+```
+cat <<EOF > /etc/apt/sources.list.d/scibian.list
+deb http://scibian.org/repo scibian8 main
+```
+
+Install Scibian keyring:
+
+```
+apt-get install --allow-unauthenticated scibian-archive-keyring
+```
+
+Install Scibian specific lintian checks:
+
+```
+apt-get install scibian-lintian
+```
+
+# Clara
+
+[Clara](https://github.com/edf-hpc/clara) is a useful tool notably to manage
+debian repositories with high-level CLI interface. Install clara with its repo
+plugin:
+
+```
+apt-get install clara-core clara-plugin-repo
+```
+
+Then edit `/etc/clara/config.ini`:
+
+```
+[common]
+allowed_distributions=scibian8,scibian9,scibian9+opa10.6
+default_distribution=scibian8
+origin=Scibian
+
+[repo]
+repo_dir=/local00/repo
+mirror_local=/local00/repo
+gpg_key=<KEYID>
+```
+
+Where `<KEYID>` is the ID of the repository signing GPG key.
+
 # Backups
 
-How-to install/setup backups? TBD
+Backups are generated using [DAR](http://dar.sourceforge.net) and a custom
+backup script `/root/backup/backupload`.
+
+Once DAR installed using APT, you need to provide the following configuration
+to DAR in `/etc/darrc`:
+
+```
+common:
+  # paths to backup (relative to backup root)
+  -g etc
+  -g home
+  -g root
+  -g var
+  -g srv
+  -g local00
+  -B /etc/darrc.skiplist
+  # batch mode, no interactive questions
+  -Q
+  # do not warn before overwriting old backup slices
+  -w
+  # store empty directories
+  -D
+  # crypt backups
+  -K XXXXXXXXXXXXXX
+  # compress backups
+  -z
+  # avoid compressing already compressed files
+  -Z '*.Z'
+  -Z '*.bz2'
+  -Z '*.gz'
+  -Z '*.jpg'
+  -Z '*.mp3'
+  -Z '*.mpg'
+  -Z '*.tgz'
+  -Z '*.zip'
+incr:
+  # crypt backups
+  -J XXXXXXXXXXXXXX
+content:
+  # crypt backups
+  -K XXXXXXXXXXXXXX
+```
+
+The encryption passphrase given using `-J` and `-K` cli flags has to
+be recovered (to be able to read old backups) or regenerated.
+
+Some files or paths are excluded from backups. This is specified in
+`/etc/darrc.skiplist`:
+
+```
+-P var/cache
+-P local00/backups
+-P local00/pbuilder
+-P local00/git
+-P local00/mirror
+-P local00/repo
+-P local00/repo-ci
+-P local00/jenkins/jobs
+-P local00/jenkins/workspace
+```
+
+The actual backup is performed using a custom `backupload` script
+which can be found in <https://github.com/scibian/scibian.org/tree/master/scripts> and is
+configured using a configuration file `/root/backup/backup.conf`:
+
+```
+BACKUP_DIR="/local00/backups"
+BACKUP_TAG="scibian.org_slash"
+BACKUP_NAME="$BACKUP_DIR/${BACKUP_TAG}"
+BACKUP_FTP_HOST="..."
+BACKUP_FTP_USER="..."
+BACKUP_FTP_PASS="..."
+```
+
+The last 3 parameters are provided by OVH.
+
+Finally, `backupload` is cronned to make one backup every day:
+
+```
+ # crontab -l | grep backup
+ 0 3 * * * cronic /root/backup/backupload
+```
+
+`backupload` makes a full backup on Sundays and incremental backups
+otherwise. If last backup is not found, it creates a new full backup. It logs
+everything to syslog using `logger`.
 
 # Monitoring
 
@@ -306,12 +467,23 @@ Create file `/etc/munin/plugin-conf.d/nginx` with the following content:
 ```
 [nginx*]
 env.url http://localhost/nginx_status
+
+[ssl*]
+env.warning 30:
 ```
 
 Enable nginx plugins by creating the following symlinks:
 
 ```
 cd /etc/munin/plugins/ && ln -sf /usr/share/munin/plugins/nginx_* .
+```
+
+Download and set correct mode on additional SSL plugin:
+
+```
+wget https://raw.githubusercontent.com/munin-monitoring/contrib/master/plugins/ssl/ssl_ \
+ -O /etc/munin/plugins/ssl_scibian.org_443
+chmod 755 /etc/munin/plugins/ssl_scibian.org_443
 ```
 
 Edit `/etc/munin/munin.conf` to setup the node, by replacing the

@@ -13,4 +13,40 @@ The repository signing key: how-to renew? TBD
 
 # Backups
 
-How to restore backups? TBD
+Backups are located in `/local00/backups` or uploaded on OVH's FTP backup
+service, in case of disaster recovery. Encryption passphrase is stored in
+/etc/darrc` and lets you read encrypted backups and encrypt newly produced
+backup files.
+
+To extract a [DAR](http://dar.sourceforge.net) backup, simply run
+`dar -x .../path/to/dar_file -R /`. The last parameter tells DAR where to
+extract the backup.
+
+# Manage repositories content
+
+Use the clara utility to manage manually the content of Scibian package
+repository. For exemple:
+
+* List the packages of the `scibian9` distribution:
+
+```
+clara repo list scibian9
+```
+
+* Add packages to the `scibian8̀  distribution:
+
+```
+clara repo add scibian8 <file>.changes
+```
+
+* Remove packages to the `scibian9`  distribution:
+
+```
+clara repo add scibian9 <package>
+```
+
+Please do NOT use `clara repo init` on the scibian.org server as distributions
+must be added dynamically by `jenkins-debian-glue` only. Otherwise, it would
+messes the repository distributions configuration file.
+
+Please refer to `clara-repo` manpage for more information.

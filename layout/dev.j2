@@ -26,5 +26,11 @@
   {% endblock dev_pkg %}
   {% endfilter %}
 </div>
+<div style="background-image:url('{{ media_url('images/icons/aspects.png') }}');" class="dev-item"/>
+  {% filter markdown|typogrify -%}
+  {% block dev_aspects %}
+  {% endblock dev_aspects %}
+  {% endfilter %}
+</div>
 
 {%- endblock %}

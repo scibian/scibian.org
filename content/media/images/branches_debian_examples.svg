@@ -142,9 +142,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="634.15419"
-     inkscape:cy="346.01003"
+     inkscape:zoom="1.979899"
+     inkscape:cx="447.30545"
+     inkscape:cy="341.96942"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -229,7 +229,7 @@
          y="53.040096"
          x="-49.813541"
          id="tspan5939"
-         sodipodi:role="line">scibian/master</tspan></text>
+         sodipodi:role="line">scibian/stretch</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -290,15 +290,15 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="-42.642231"
+       x="-49.056698"
        y="26.786575"
        id="text6361"
        transform="rotate(-90)"><tspan
          sodipodi:role="line"
          id="tspan6359"
-         x="-42.642231"
+         x="-49.056698"
          y="26.786575"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans Italic';stroke-width:0.26458332px">scibian/8</tspan></text>
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans Italic';stroke-width:0.26458332px">scibian/jessie</tspan></text>
     <text
        id="text6365"
        y="72.401886"
@@ -349,12 +349,12 @@
     <text
        transform="rotate(-90)"
        id="text7664"
-       y="173.46971"
+       y="175.87514"
        x="-40.238934"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        xml:space="preserve"><tspan
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans Italic';stroke-width:0.26458332px"
-         y="173.46971"
+         y="175.87514"
          x="-40.238934"
          id="tspan7662"
          sodipodi:role="line">master</tspan></text>
@@ -368,14 +368,14 @@
        transform="rotate(-90)"
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="-49.813541"
+       x="-48.477192"
        y="141.77"
        id="text7670"><tspan
          sodipodi:role="line"
          id="tspan7668"
-         x="-49.813541"
+         x="-48.477192"
          y="141.77"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans Italic';stroke-width:0.26458332px">scibian/master</tspan></text>
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans Italic';stroke-width:0.26458332px">scibian/stretch</tspan></text>
     <text
        id="text7674"
        y="64.434402"
@@ -437,14 +437,14 @@
        transform="rotate(-90)"
        id="text7694"
        y="120.35026"
-       x="-42.642231"
+       x="-47.453083"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        xml:space="preserve"><tspan
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans Italic';stroke-width:0.26458332px"
          y="120.35026"
-         x="-42.642231"
+         x="-47.453083"
          id="tspan7692"
-         sodipodi:role="line">scibian/8</tspan></text>
+         sodipodi:role="line">scibian/jessie</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"

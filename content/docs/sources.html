@@ -20,9 +20,11 @@ naming conventions, depending on the package type.
 
 ## Scibian specific native packages
 
-* `master`: code and packaging for last Scibian release.
-* `scibian/$codename` *(optional)*: code and packaging for previous Scibian
-  releases (ex: `scibian/jessie`).
+* `scibian/$codename`: code and packaging for Scibian releases (ex:
+  `scibian/jessie`).
+
+The default branch in GitHub repository settings must be set to the latest
+Scibian release branch.
 
 ## Debian native packages modified in Scibian
 
@@ -30,29 +32,29 @@ naming conventions, depending on the package type.
   packages in the latest Scibian release).
 * `debian/$codename` *(optional)*: code and packaging from specific Debian
   releases (ex: `debian/stretch`) if required by previous Scibian releases.
-* `scibian/master`: code and packaging for last Scibian release.
-* `scibian/$codename` *(optional)*: code and packaging for previous Scibian
-  releases (ex: `scibian/jessie`).
+* `scibian/$codename`: code and packaging for Scibian releases (ex:
+  `scibian/jessie`).
 
 The `master` and `debian/*` branches must be populated using `gbp import-dsc`.
 These branches are not supposed to contain the full history of commits from the
 Debian maintainers.
 
-The default branch in GitHub repository settings must be set to `scibian/master`.
+The default branch in GitHub repository settings must be set to the latest
+Scibian release branch.
 
 ## Scibian specific quilt package
 
 * `upstream` : imported version of the code as released by upstream developers.
 * `pristine-tar`: binary delta file for pristine upstream tarballs.
-* `scibian/master`: code and packaging for last Scibian release.
-* `scibian/$codename` *(optional)*: code and packaging for previous Scibian
-  releases (ex: `scibian/jessie`).
+* `scibian/$codename`: code and packaging for Scibian releases (ex:
+  `scibian/jessie`).
 
 The `upstream` branch must be populated using `gbp import-orig`. This branch is
 not supposed to contain the full history of commits from the upstream
 developers.
 
-The default branch in GitHub repository settings must be set to `scibian/master`.
+The default branch in GitHub repository settings must be set to the latest
+Scibian release branch.
 
 ## Debian quilt package modified in Scibian
 
@@ -62,15 +64,21 @@ The default branch in GitHub repository settings must be set to `scibian/master`
   packages in the latest Scibian release).
 * `debian/$codename` *(optional)*: code and packaging from specific Debian
   releases (ex: `debian/stretch`) if required by previous Scibian releases.
-* `scibian/master`: code and packaging for last Scibian release.
-* `scibian/$codename` *(optional)*: code and packaging for previous Scibian
-  releases (ex: `scibian/jessie`).
+* `scibian/$codename`: code and packaging for Scibian releases (ex:
+  `scibian/jessie`).
 
 The `upstream`, `master` and `debian/*` branches must be populated using
 `gbp import-dsc`. These branches are not supposed to contain the full history of
 commits from the Debian maintainers.
 
-The default branch in GitHub repository settings must be set to `scibian/master`.
+The default branch in GitHub repository settings must be set to the latest
+Scibian release branch.
+
+## Aspects packages
+
+The conventions for the branches of packages distributed in aspects are
+documented in the dedicated [aspects packages
+development]({{ content_url('/docs/aspects.html') }}) page.
 
 ## General notes
 
@@ -106,21 +114,25 @@ naming conventions:
 
 For native packages, there is no `upstream/*` tags.
 
-To create the Scibian releases tag using `git-buildpackage`, for example in
-`scibian/master` branch, run the following command:
+For packages distributed in aspects, there is a specific tag format documented
+in the dedicated [aspects packages
+development]({{ content_url('/docs/aspects.html') }}) page.
+
+To create the Scibian releases tag using `git-buildpackage`, for example for
+Scibian 9 in `scibian/stretch` branch, run the following command:
 
 ```
 gbp buildpackage --git-tag-only \
-                 --git-debian-branch=scibian/master \
+                 --git-debian-branch=scibian/stretch \
                  --git-debian-tag='scibian/%(version)s' \
                  --git-debian-tag-msg='%(pkg)s Scibian release %(version)s'
 ```
 
-To generate the changelog entries, for example for Scibian 8 in
-`scibian/master` branch, run:
+To generate the changelog entries, for example for Scibian 9 in
+`scibian/stretch` branch, run:
 
 ```
 gbp dch --distribution=scibian8 --force-distribution \
-        --debian-branch=scibian/master \
+        --debian-branch=scibian/stretch \
         --debian-tag='scibian/%(version)s'
 ```
