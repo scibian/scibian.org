@@ -23,6 +23,8 @@ If you need any assitance with Debian installation, you can refer to the officia
 
 Boot you newly installed Debian system and login as `root`.
 
+Create the folders `/local00` and `/scratch` with permissions 755.
+
 Add the contrib and non-free sections to the Debian APT sources:
 ```
 sed -i 's/ main/ main contrib non-free/' /etc/apt/sources.list
