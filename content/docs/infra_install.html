@@ -195,6 +195,14 @@ parameters:
 The client ID and secret can be retrieved in the settings of the GitHub Scibian
 organization.
 
+Enable pristine-tar by default for building upstream tarballs with this setting
+in file `/local00/jenkins/.gbp.conf`:
+
+```
+[DEFAULT]
+pristine-tar=true
+```
+
 # HTTP server
 
 Install Nginx HTTP server:
