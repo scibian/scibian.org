@@ -140,7 +140,15 @@ Create extra pbuilder configuration file `/etc/jenkins/pbuilderrc` with the
 following content to enable debian security mirror in build environments:
 
 ```
-OTHERMIRROR="deb http://debian.mirrors.ovh.net/debian-security/ ${DIST}/updates main"
+# Starting from bullseye (debian11) layout of security repository has changed
+case ${DIST} in
+  bullseye)
+    OTHERMIRROR="deb http://debian.mirrors.ovh.net/debian-security/ ${DIST}-security main"
+    ;;
+  *)
+    OTHERMIRROR="deb http://debian.mirrors.ovh.net/debian-security/ ${DIST}/updates main"
+    ;;
+esac
 ```
 
 Then setup Jenkins in `/etc/default/jenkins` with the following modifications:
